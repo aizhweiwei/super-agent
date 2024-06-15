@@ -19,7 +19,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Worker.')
     parser.add_argument('--work_dir',
                         type=str,
-                        default='/group_share/data/workdir',
+                        default='workdir',
                         help='Working directory.')
     parser.add_argument(
         '--config_path',

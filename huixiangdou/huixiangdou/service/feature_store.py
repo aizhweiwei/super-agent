@@ -440,7 +440,7 @@ def parse_args():
         description='Feature store for processing directories.')
     parser.add_argument('--work_dir',
                         type=str,
-                        default='/group_share/data/workdir',
+                        default='workdir',
                         help='Working directory.')
     parser.add_argument(
         '--repo_dir',
