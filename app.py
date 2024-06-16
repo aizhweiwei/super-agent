@@ -9,7 +9,7 @@ os.system(f'git clone https://code.openxlab.org.cn/bob12/MedicalAssistant_intern
 embedding_path = './bce-embedding-base_v1'
 os.system(f'git clone https://www.modelscope.cn/maple77/bce-embedding-base_v1.git {embedding_path}')
 reranker_path = './bce-reranker-base_v1'
-os.system(f'git clone https://www.modelscope.cn/maple77/bce-reranker-base_v1.git {base_path}')
+os.system(f'git clone https://www.modelscope.cn/maple77/bce-reranker-base_v1.git {reranker_path}')
 os.system(f'cd {base_path} && git lfs pull')
 os.system(f'cd {embedding_path} && git lfs pull')
 os.system(f'cd {reranker_path} && git lfs pull')
