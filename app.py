@@ -4,11 +4,15 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoModel
 
 # download internlm2 to the base_path directory using git tool
-base_path = './internlm2-chat-7b'
-os.system(f'git clone https://code.openxlab.org.cn/OpenLMLab/internlm2-chat-7b.git {base_path}')
-os.system(f'git clone https://www.modelscope.cn/maple77/bce-embedding-base_v1.git {base_path}')
+base_path = './final_model'
+os.system(f'git clone https://code.openxlab.org.cn/bob12/MedicalAssistant_internlm-7B.git {base_path}')
+embedding_path = './bce-embedding-base_v1'
+os.system(f'git clone https://www.modelscope.cn/maple77/bce-embedding-base_v1.git {embedding_path}')
+reranker_path = './bce-reranker-base_v1'
 os.system(f'git clone https://www.modelscope.cn/maple77/bce-reranker-base_v1.git {base_path}')
 os.system(f'cd {base_path} && git lfs pull')
+os.system(f'cd {embedding_path} && git lfs pull')
+os.system(f'cd {reranker_path} && git lfs pull')
 
 
 import argparse
@@ -64,28 +68,35 @@ if args.standalone is True:
     # hybrid llm serve
     start_llm_server(config_path=args.config_path)
 
-with gr.Blocks() as demo:
-    with gr.Row():
-        input_question = gr.Textbox(label='输入你的提问')
-        with gr.Column():
-            result = gr.Textbox(label='生成结果')
-            run_button = gr.Button()
-    run_button.click(fn=get_reply, inputs=input_question, outputs=result)
+# with gr.Blocks() as demo:
+#     with gr.Row():
+#         input_question = gr.Textbox(label='输入你的提问')
+#         with gr.Column():
+#             result = gr.Textbox(label='生成结果')
+#             run_button = gr.Button()
+#     run_button.click(fn=get_reply, inputs=input_question, outputs=result)
 
 
 
 
 
-tokenizer = AutoTokenizer.from_pretrained(base_path,trust_remote_code=True)
-model = AutoModelForCausalLM.from_pretrained(base_path,trust_remote_code=True, torch_dtype=torch.float16).cuda()
+# tokenizer = AutoTokenizer.from_pretrained(base_path,trust_remote_code=True)
+# model = AutoModelForCausalLM.from_pretrained(base_path,trust_remote_code=True, torch_dtype=torch.float16).cuda()
 
-def chat(message,history):
-    for response,history in model.stream_chat(tokenizer,message,history,max_length=2048,top_p=0.7,temperature=1):
-        yield response
+assistant = Worker(work_dir=args.work_dir, config_path=args.config_path)
+# code, reply, references = assistant.generate(query=query,
+#                                                 history=[],
+#                                                 groupname='')
+
+def chat(message,history=[]):
+    code, reply, references = assistant.generate(query=message,
+                                                history=history,
+                                                groupname='')
+    return reply
 
 gr.ChatInterface(chat,
-                 title="InternLM2-Chat-7B",
+                 title="MedicalAssistant_internlm",
                 description="""
-InternLM is mainly developed by Shanghai AI Laboratory.  
+MedicalAssistant_internlm is super Assistant.  
                  """,
                  ).queue(1).launch()
