@@ -495,7 +495,7 @@ class Worker:
         # run
         exit_states = [ErrorCode.QUESTION_TOO_SHORT, ErrorCode.NOT_A_QUESTION, ErrorCode.NO_TOPIC, ErrorCode.UNRELATED]
         for node in pipeline:
-            logger.error(node.__class__.__name__)
+            logger.info(node.__class__.__name__)
             node.process(sess)
             
             # unrelated to knowledge base or bad input, exit
